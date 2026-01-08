@@ -1,0 +1,45 @@
+import { UndervaluedSales } from '@/types/database';
+
+export const mockProperty: UndervaluedSales = {
+  id: 'prop-12345',
+  address: '425 East 58th Street, Unit 12B',
+  borough: 'Manhattan',
+  neighborhood: 'Sutton Place',
+  latitude: 40.7589,
+  longitude: -73.9623,
+  bedrooms: 2,
+  bathrooms: 2,
+  sqft: 1150,
+  price: 1250000,
+  price_per_sqft: 1087,
+  score: 94,
+  grade: 'A',
+  discount_percent: 18,
+  potential_savings: 275000,
+  images: [
+    'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1200&h=800&fit=crop',
+    'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1200&h=800&fit=crop',
+    'https://images.unsplash.com/photo-1560185127-6ed189bf02f4?w=1200&h=800&fit=crop',
+    'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1200&h=800&fit=crop',
+  ],
+  amenities: [
+    'Doorman',
+    'Elevator',
+    'Laundry_in_Building',
+    'Gym',
+    'Rooftop_Deck',
+    'Storage',
+    'Bike_Room',
+    'Central_AC',
+  ],
+  property_type: 'Condo',
+  built_in: 1965,
+  days_on_market: 45,
+  monthly_hoa: 1450,
+  monthly_tax: 875,
+  description:
+    'Stunning sun-flooded corner two-bedroom in one of Sutton Place\'s most coveted full-service buildings. This gracious home features oversized windows with sweeping East River views, a renovated chef\'s kitchen with stainless steel appliances, and beautifully appointed bathrooms. The building offers 24-hour doorman, live-in super, gym, and landscaped rooftop terrace.',
+  reasoning:
+    'This property is priced 18% below comparable units in the immediate area. Recent sales of similar 2BR units in Sutton Place have closed between $1,400,000-$1,650,000. The combination of river views, full-service building, and prime location make this an exceptional value opportunity. The slightly longer days on market may be due to limited open house availability.',
+  listing_id: '12345678',
+};
