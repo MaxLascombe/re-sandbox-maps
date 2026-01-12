@@ -1,17 +1,32 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { UndervaluedSales, UndervaluedRentals } from '@/types/database';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { X, ChevronLeft, ChevronRight, MapPin, ChevronDown, ExternalLink } from 'lucide-react';
-import BookmarkButton from './BookmarkButton';
-import TourRequestForm from './TourRequestForm';
-import QuestionForm from './QuestionForm';
-import { getNeighborhoodInfo, capitalizeNeighborhood } from '@/data/neighborhoodData';
-import { useAuth } from '@/contexts/AuthContext';
-import { useNavigate } from '@/stubs/react-router-dom';
-import { HoverButton } from '@/components/ui/hover-button';
+import React, { useState, useEffect, useRef } from "react";
+import { UndervaluedSales, UndervaluedRentals } from "@/types/database";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import {
+  X,
+  ChevronLeft,
+  ChevronRight,
+  MapPin,
+  ChevronDown,
+  ExternalLink,
+} from "lucide-react";
+import BookmarkButton from "./BookmarkButton";
+import TourRequestForm from "./TourRequestForm";
+import QuestionForm from "./QuestionForm";
+import {
+  getNeighborhoodInfo,
+  capitalizeNeighborhood,
+} from "@/data/neighborhoodData";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "@/stubs/react-router-dom";
+import { HoverButton } from "@/components/ui/hover-button";
+import Map from "./maps/Map";
 
 interface PropertyDetailProps {
   property: UndervaluedSales | UndervaluedRentals;
@@ -19,7 +34,11 @@ interface PropertyDetailProps {
   onClose: () => void;
 }
 
-const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = false, onClose }) => {
+const PropertyDetail: React.FC<PropertyDetailProps> = ({
+  property,
+  isRental = false,
+  onClose,
+}) => {
   const { user, userProfile } = useAuth();
   const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -54,15 +73,15 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
 
   // Calculate grade from score for rent-stabilized properties
   const calculateGradeFromScore = (score: number): string => {
-    if (score >= 98) return 'A+';
-    if (score >= 93) return 'A';
-    if (score >= 88) return 'B+';
-    if (score >= 83) return 'B';
-    if (score >= 79) return 'B-';
-    if (score >= 75) return 'C+';
-    if (score >= 70) return 'C';
-    if (score >= 60) return 'C-';
-    return 'D';
+    if (score >= 98) return "A+";
+    if (score >= 93) return "A";
+    if (score >= 88) return "B+";
+    if (score >= 83) return "B";
+    if (score >= 79) return "B-";
+    if (score >= 75) return "C+";
+    if (score >= 70) return "C";
+    if (score >= 60) return "C-";
+    return "D";
   };
 
   // Process images to handle different formats
@@ -72,13 +91,13 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
     }
 
     return property.images.map((img: any) => {
-      if (typeof img === 'string') {
+      if (typeof img === "string") {
         return img;
       }
-      if (typeof img === 'object' && img !== null) {
-        return img.url || img.image_url || '/placeholder.svg';
+      if (typeof img === "object" && img !== null) {
+        return img.url || img.image_url || "/placeholder.svg";
       }
-      return '/placeholder.svg';
+      return "/placeholder.svg";
     });
   };
 
@@ -86,9 +105,9 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
   const hasImages = images.length > 0;
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(price);
@@ -102,46 +121,48 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
 
   const prevImage = () => {
     if (hasImages) {
-      setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
+      setCurrentImageIndex(
+        (prev) => (prev - 1 + images.length) % images.length
+      );
     }
   };
 
   const getGradeTheme = (grade: string) => {
     switch (grade.toUpperCase()) {
-      case 'A+':
+      case "A+":
         return {
-          bgColor: 'bg-yellow-500/20',
-          borderColor: 'border-yellow-500',
-          textColor: 'text-yellow-500',
-          glowColor: 'shadow-[0_0_20px_rgba(234,179,8,0.3)]',
-          marketGlow: 'shadow-[0_0_30px_rgba(234,179,8,0.4)]',
+          bgColor: "bg-yellow-500/20",
+          borderColor: "border-yellow-500",
+          textColor: "text-yellow-500",
+          glowColor: "shadow-[0_0_20px_rgba(234,179,8,0.3)]",
+          marketGlow: "shadow-[0_0_30px_rgba(234,179,8,0.4)]",
         };
-      case 'A':
-      case 'A-':
+      case "A":
+      case "A-":
         return {
-          bgColor: 'bg-purple-500/20',
-          borderColor: 'border-purple-500',
-          textColor: 'text-purple-500',
-          glowColor: 'shadow-[0_0_20px_rgba(168,85,247,0.3)]',
-          marketGlow: 'shadow-[0_0_30px_rgba(168,85,247,0.4)]',
+          bgColor: "bg-purple-500/20",
+          borderColor: "border-purple-500",
+          textColor: "text-purple-500",
+          glowColor: "shadow-[0_0_20px_rgba(168,85,247,0.3)]",
+          marketGlow: "shadow-[0_0_30px_rgba(168,85,247,0.4)]",
         };
-      case 'B+':
-      case 'B':
-      case 'B-':
+      case "B+":
+      case "B":
+      case "B-":
         return {
-          bgColor: 'bg-blue-500/20',
-          borderColor: 'border-blue-500',
-          textColor: 'text-blue-500',
-          glowColor: 'shadow-[0_0_20px_rgba(59,130,246,0.3)]',
-          marketGlow: 'shadow-[0_0_30px_rgba(59,130,246,0.4)]',
+          bgColor: "bg-blue-500/20",
+          borderColor: "border-blue-500",
+          textColor: "text-blue-500",
+          glowColor: "shadow-[0_0_20px_rgba(59,130,246,0.3)]",
+          marketGlow: "shadow-[0_0_30px_rgba(59,130,246,0.4)]",
         };
       default:
         return {
-          bgColor: 'bg-white/20',
-          borderColor: 'border-white',
-          textColor: 'text-white',
-          glowColor: 'shadow-[0_0_20px_rgba(255,255,255,0.3)]',
-          marketGlow: 'shadow-[0_0_30px_rgba(255,255,255,0.4)]',
+          bgColor: "bg-white/20",
+          borderColor: "border-white",
+          textColor: "text-white",
+          glowColor: "shadow-[0_0_20px_rgba(255,255,255,0.3)]",
+          marketGlow: "shadow-[0_0_30px_rgba(255,255,255,0.4)]",
         };
     }
   };
@@ -164,18 +185,20 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
     ? (property as UndervaluedRentals).rent_per_sqft
     : (property as UndervaluedSales).price_per_sqft;
 
-  const currentImageUrl = hasImages ? images[currentImageIndex] : '/placeholder.svg';
+  const currentImageUrl = hasImages
+    ? images[currentImageIndex]
+    : "/placeholder.svg";
 
   // Truncate description for preview
   const truncateDescription = (text: string, wordLimit: number = 35) => {
-    if (!text) return '';
-    const words = text.split(' ');
+    if (!text) return "";
+    const words = text.split(" ");
     if (words.length <= wordLimit) return text;
-    return words.slice(0, wordLimit).join(' ') + '...';
+    return words.slice(0, wordLimit).join(" ") + "...";
   };
 
   const shouldShowReadMore =
-    property.description && property.description.split(' ').length > 35;
+    property.description && property.description.split(" ").length > 35;
 
   // Get the market analysis text for rent-stabilized properties
   const getMarketAnalysisText = () => {
@@ -183,23 +206,23 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
       const analysis = (property as any).undervaluation_analysis;
 
       // If it's a string, return it directly
-      if (typeof analysis === 'string') {
+      if (typeof analysis === "string") {
         return analysis;
       }
 
       // If it's an object, try to extract the explanation or methodology
-      if (typeof analysis === 'object' && analysis !== null) {
+      if (typeof analysis === "object" && analysis !== null) {
         return (
           analysis.explanation ||
           analysis.methodology ||
           analysis.summary ||
-          (typeof analysis === 'object' ? JSON.stringify(analysis) : '')
+          (typeof analysis === "object" ? JSON.stringify(analysis) : "")
         );
       }
     }
 
     // Fallback to existing reasoning for non-rent-stabilized properties
-    return property.reasoning || '';
+    return property.reasoning || "";
   };
 
   const neighborhoodInfo = getNeighborhoodInfo(property.neighborhood);
@@ -229,7 +252,8 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
   const annualSavings = getAnnualSavings();
 
   useEffect(() => {
-    if (!hasAnimated || !annualSavings || animatedSavings >= annualSavings) return;
+    if (!hasAnimated || !annualSavings || animatedSavings >= annualSavings)
+      return;
 
     let frameId: number;
     const duration = 1200;
@@ -257,7 +281,9 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
           <div className="max-w-6xl mx-auto bg-black/70 backdrop-blur-2xl rounded-3xl border border-white/10 shadow-2xl ring-1 ring-white/15">
             {/* Header with close button */}
             <div className="flex justify-between items-center p-6">
-              <h1 className="text-2xl font-bold text-white tracking-tight">Property Details</h1>
+              <h1 className="text-2xl font-bold text-white tracking-tight">
+                Property Details
+              </h1>
               <Button
                 variant="ghost"
                 size="icon"
@@ -277,7 +303,7 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                       alt={property.address}
                       className="w-full h-full object-cover"
                       onError={(e) => {
-                        e.currentTarget.src = '/placeholder.svg';
+                        e.currentTarget.src = "/placeholder.svg";
                       }}
                     />
 
@@ -291,11 +317,14 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                       className="absolute inset-0 lg:hidden"
                       onTouchStart={(e) => {
                         const touch = e.touches[0];
-                        e.currentTarget.setAttribute('data-start-x', touch.clientX.toString());
+                        e.currentTarget.setAttribute(
+                          "data-start-x",
+                          touch.clientX.toString()
+                        );
                       }}
                       onTouchEnd={(e) => {
                         const startX = parseFloat(
-                          e.currentTarget.getAttribute('data-start-x') || '0'
+                          e.currentTarget.getAttribute("data-start-x") || "0"
                         );
                         const endX = e.changedTouches[0].clientX;
                         const diff = startX - endX;
@@ -316,7 +345,7 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                   <div className="absolute top-4 right-4 z-30">
                     <BookmarkButton
                       propertyId={property.id}
-                      propertyType={isRental ? 'rental' : 'sale'}
+                      propertyType={isRental ? "rental" : "sale"}
                     />
                   </div>
 
@@ -363,12 +392,16 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                   {/* Address and Price */}
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
-                      <h2 className="text-3xl font-bold text-white mb-2">{property.address}</h2>
+                      <h2 className="text-3xl font-bold text-white mb-2">
+                        {property.address}
+                      </h2>
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center text-gray-400">
                           <MapPin className="h-4 w-4 mr-2" />
                           {property.neighborhood &&
-                            `${capitalizeNeighborhood(property.neighborhood)}, `}
+                            `${capitalizeNeighborhood(
+                              property.neighborhood
+                            )}, `}
                           {capitalizeNeighborhood(property.borough)}
                         </div>
                         {/* Grade and Score on mobile - hidden on desktop */}
@@ -379,10 +412,14 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                           <div
                             className={`${gradeTheme.bgColor} ${gradeTheme.borderColor} ${gradeTheme.glowColor} border rounded-full px-2 py-1 flex items-center space-x-1`}
                           >
-                            <span className={`text-xs ${gradeTheme.textColor} font-medium`}>
+                            <span
+                              className={`text-xs ${gradeTheme.textColor} font-medium`}
+                            >
                               Score:
                             </span>
-                            <span className={`text-xs font-bold ${gradeTheme.textColor}`}>
+                            <span
+                              className={`text-xs font-bold ${gradeTheme.textColor}`}
+                            >
                               {property.score}
                             </span>
                           </div>
@@ -391,10 +428,12 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                       {/* Price */}
                       <div className="text-3xl font-bold text-white mb-2">
                         {formatPrice(price)}
-                        {isRental ? '/mo' : ''}
+                        {isRental ? "/mo" : ""}
                       </div>
                       {pricePerSqft && (
-                        <div className="text-gray-300 mb-4">{formatPrice(pricePerSqft)}/sqft</div>
+                        <div className="text-gray-300 mb-4">
+                          {formatPrice(pricePerSqft)}/sqft
+                        </div>
                       )}
                     </div>
                   </div>
@@ -411,10 +450,13 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                             ) : property.bedrooms > 0 ? (
                               <span className="text-white/80">
                                 {String(property.bedrooms)
-                                  .split(' ')
+                                  .split(" ")
                                   .map((part, i) =>
-                                    part === '0' || part === '00' ? (
-                                      <span key={i} style={{ color: '#19202D' }}>
+                                    part === "0" || part === "00" ? (
+                                      <span
+                                        key={i}
+                                        style={{ color: "#19202D" }}
+                                      >
                                         0
                                       </span>
                                     ) : (
@@ -423,7 +465,7 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                                   )}
                               </span>
                             ) : (
-                              <span style={{ color: '#19202D' }}>N/A</span>
+                              <span style={{ color: "#19202D" }}>N/A</span>
                             )}
                           </div>
                           <div className="flex justify-between text-sm">
@@ -432,7 +474,7 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                               {property.bathrooms && property.bathrooms > 0 ? (
                                 property.bathrooms
                               ) : (
-                                <span style={{ color: '#19202D' }}>N/A</span>
+                                <span style={{ color: "#19202D" }}>N/A</span>
                               )}
                             </span>
                           </div>
@@ -440,36 +482,52 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                         <div className="space-y-2">
                           {property.sqft && property.sqft > 0 && (
                             <div className="flex justify-between text-sm">
-                              <span className="text-gray-400">Square Feet:</span>
-                              <span className="text-white">{property.sqft}</span>
+                              <span className="text-gray-400">
+                                Square Feet:
+                              </span>
+                              <span className="text-white">
+                                {property.sqft}
+                              </span>
                             </div>
                           )}
-                          {property.days_on_market && property.days_on_market > 0 && (
-                            <div className="flex justify-between text-sm">
-                              <span className="text-gray-400">Days on Market:</span>
-                              <span className="text-white">{property.days_on_market}</span>
-                            </div>
-                          )}
+                          {property.days_on_market &&
+                            property.days_on_market > 0 && (
+                              <div className="flex justify-between text-sm">
+                                <span className="text-gray-400">
+                                  Days on Market:
+                                </span>
+                                <span className="text-white">
+                                  {property.days_on_market}
+                                </span>
+                              </div>
+                            )}
                         </div>
                         <div className="space-y-2">
                           {property.property_type && (
                             <div className="flex justify-between text-sm">
                               <span className="text-gray-400">Type:</span>
-                              <span className="text-white capitalize">{property.property_type}</span>
+                              <span className="text-white capitalize">
+                                {property.property_type}
+                              </span>
                             </div>
                           )}
                           {property.built_in && property.built_in > 0 && (
                             <div className="flex justify-between text-sm">
                               <span className="text-gray-400">Built:</span>
-                              <span className="text-white">{property.built_in}</span>
+                              <span className="text-white">
+                                {property.built_in}
+                              </span>
                             </div>
                           )}
-                          {isRental && (property as UndervaluedRentals).no_fee && (
-                            <div className="flex justify-between text-sm">
-                              <span className="text-gray-400">Broker Fee:</span>
-                              <span className="text-green-400">No Fee</span>
-                            </div>
-                          )}
+                          {isRental &&
+                            (property as UndervaluedRentals).no_fee && (
+                              <div className="flex justify-between text-sm">
+                                <span className="text-gray-400">
+                                  Broker Fee:
+                                </span>
+                                <span className="text-green-400">No Fee</span>
+                              </div>
+                            )}
                         </div>
                       </div>
                     </CardContent>
@@ -480,16 +538,22 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                     className={`bg-black ${gradeTheme.borderColor} ${gradeTheme.marketGlow} border-2`}
                   >
                     <CardHeader>
-                      <CardTitle className="text-white">Market Analysis</CardTitle>
+                      <CardTitle className="text-white">
+                        Market Analysis
+                      </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       {user ? (
                         <>
                           <div className="text-center">
-                            <div className={`text-2xl font-bold ${gradeTheme.textColor} mb-1`}>
+                            <div
+                              className={`text-2xl font-bold ${gradeTheme.textColor} mb-1`}
+                            >
                               {Math.round(discountPercent || 0)}%
                             </div>
-                            <div className="text-sm text-gray-400">Below Market Value</div>
+                            <div className="text-sm text-gray-400">
+                              Below Market Value
+                            </div>
                           </div>
 
                           {getMarketAnalysisText() && (
@@ -501,10 +565,14 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                       ) : (
                         <div className="relative">
                           <div className="text-center">
-                            <div className={`text-2xl font-bold ${gradeTheme.textColor} mb-1`}>
+                            <div
+                              className={`text-2xl font-bold ${gradeTheme.textColor} mb-1`}
+                            >
                               {Math.round(discountPercent || 0)}%
                             </div>
-                            <div className="text-sm text-gray-400">Below Market Value</div>
+                            <div className="text-sm text-gray-400">
+                              Below Market Value
+                            </div>
                           </div>
 
                           {getMarketAnalysisText() && (
@@ -518,71 +586,87 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                   </Card>
 
                   {/* Rent-Stabilized Analysis Section */}
-                  {isRentStabilized && (property as any).rent_stabilization_analysis && (
-                    <Card className="bg-black border-gray-700">
-                      <CardHeader>
-                        <CardTitle className="text-white flex items-center">
-                          Rent-Stabilized Analysis
-                          <Badge
-                            variant="outline"
-                            className="ml-2 text-xs border-green-600 text-green-400"
-                          >
-                            Rent-stabilized
-                          </Badge>
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        {(property as any).rent_stabilization_analysis?.explanation && (
-                          <div className="text-sm text-gray-300 leading-relaxed">
-                            <strong>Analysis:</strong>{' '}
-                            {(property as any).rent_stabilization_analysis.explanation.replace(
-                              /(\d+\.\d{2,})%/g,
-                              (_match: string, number: string) =>
-                                `${Math.round(parseFloat(number))}%`
-                            )}
-                          </div>
-                        )}
-
-                        {(property as any).rent_stabilization_analysis?.key_factors &&
-                          (property as any).rent_stabilization_analysis.key_factors.length > 0 && (
-                            <div>
-                              <h4 className="text-sm font-medium text-white mb-2">Key Factors:</h4>
-                              <ul className="list-disc list-inside text-sm text-gray-300 space-y-1">
-                                {(property as any).rent_stabilization_analysis.key_factors.map(
-                                  (factor: string, index: number) => (
-                                    <li key={index}>
-                                      {factor.replace(
-                                        /(\d+\.\d{2,})%/g,
-                                        (_match: string, number: string) =>
-                                          `${Math.round(parseFloat(number))}%`
-                                      )}
-                                    </li>
-                                  )
-                                )}
-                              </ul>
+                  {isRentStabilized &&
+                    (property as any).rent_stabilization_analysis && (
+                      <Card className="bg-black border-gray-700">
+                        <CardHeader>
+                          <CardTitle className="text-white flex items-center">
+                            Rent-Stabilized Analysis
+                            <Badge
+                              variant="outline"
+                              className="ml-2 text-xs border-green-600 text-green-400"
+                            >
+                              Rent-stabilized
+                            </Badge>
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                          {(property as any).rent_stabilization_analysis
+                            ?.explanation && (
+                            <div className="text-sm text-gray-300 leading-relaxed">
+                              <strong>Analysis:</strong>{" "}
+                              {(
+                                property as any
+                              ).rent_stabilization_analysis.explanation.replace(
+                                /(\d+\.\d{2,})%/g,
+                                (_match: string, number: string) =>
+                                  `${Math.round(parseFloat(number))}%`
+                              )}
                             </div>
                           )}
 
-                        {(property as any).rent_stabilized_confidence && (
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-400">Confidence Level:</span>
-                            <span className="text-green-400">
-                              {(property as any).rent_stabilized_confidence}%
-                            </span>
-                          </div>
-                        )}
+                          {(property as any).rent_stabilization_analysis
+                            ?.key_factors &&
+                            (property as any).rent_stabilization_analysis
+                              .key_factors.length > 0 && (
+                              <div>
+                                <h4 className="text-sm font-medium text-white mb-2">
+                                  Key Factors:
+                                </h4>
+                                <ul className="list-disc list-inside text-sm text-gray-300 space-y-1">
+                                  {(
+                                    property as any
+                                  ).rent_stabilization_analysis.key_factors.map(
+                                    (factor: string, index: number) => (
+                                      <li key={index}>
+                                        {factor.replace(
+                                          /(\d+\.\d{2,})%/g,
+                                          (_match: string, number: string) =>
+                                            `${Math.round(parseFloat(number))}%`
+                                        )}
+                                      </li>
+                                    )
+                                  )}
+                                </ul>
+                              </div>
+                            )}
 
-                        {(property as any).potential_monthly_savings && (
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-400">Potential Monthly Savings:</span>
-                            <span className="text-green-400">
-                              {formatPrice((property as any).potential_monthly_savings)}
-                            </span>
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
-                  )}
+                          {(property as any).rent_stabilized_confidence && (
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-400">
+                                Confidence Level:
+                              </span>
+                              <span className="text-green-400">
+                                {(property as any).rent_stabilized_confidence}%
+                              </span>
+                            </div>
+                          )}
+
+                          {(property as any).potential_monthly_savings && (
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-400">
+                                Potential Monthly Savings:
+                              </span>
+                              <span className="text-green-400">
+                                {formatPrice(
+                                  (property as any).potential_monthly_savings
+                                )}
+                              </span>
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    )}
 
                   {/* Amenities */}
                   {property.amenities && property.amenities.length > 0 && (
@@ -598,12 +682,23 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                               variant="outline"
                               className="border-gray-600 text-gray-300"
                             >
-                              {amenity.replace(/_/g, ' ')}
+                              {amenity.replace(/_/g, " ")}
                             </Badge>
                           ))}
                         </div>
                       </CardContent>
                     </Card>
+                  )}
+
+                  {/* Map */}
+                  {property.latitude && property.longitude && (
+                    <div className="mt-6">
+                      <Map
+                        latitude={property.latitude}
+                        longitude={property.longitude}
+                        address={property.address}
+                      />
+                    </div>
                   )}
                 </div>
 
@@ -617,10 +712,14 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                     <div
                       className={`${gradeTheme.bgColor} ${gradeTheme.borderColor} ${gradeTheme.glowColor} border rounded-full px-3 py-1 flex items-center space-x-1`}
                     >
-                      <span className={`text-xs ${gradeTheme.textColor} font-medium`}>
+                      <span
+                        className={`text-xs ${gradeTheme.textColor} font-medium`}
+                      >
                         Deal Score:
                       </span>
-                      <span className={`text-sm font-bold ${gradeTheme.textColor}`}>
+                      <span
+                        className={`text-sm font-bold ${gradeTheme.textColor}`}
+                      >
                         {property.score}
                       </span>
                     </div>
@@ -630,7 +729,9 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                   {neighborhoodInfo && (
                     <Card className="bg-black border-gray-700">
                       <CardHeader>
-                        <CardTitle className="text-white">About the Neighborhood</CardTitle>
+                        <CardTitle className="text-white">
+                          About the Neighborhood
+                        </CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-4">
                         <p className="text-sm text-gray-300 leading-relaxed">
@@ -639,14 +740,21 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
 
                         <div className="space-y-3">
                           <div>
-                            <h4 className="text-sm font-medium text-green-400 mb-1">Great for:</h4>
-                            <p className="text-xs text-gray-400">{neighborhoodInfo.pros[0]}</p>
+                            <h4 className="text-sm font-medium text-green-400 mb-1">
+                              Great for:
+                            </h4>
+                            <p className="text-xs text-gray-400">
+                              {neighborhoodInfo.pros[0]}
+                            </p>
                           </div>
 
                           <div>
-                            <h4 className="text-sm font-medium text-yellow-400 mb-1">Good for:</h4>
+                            <h4 className="text-sm font-medium text-yellow-400 mb-1">
+                              Good for:
+                            </h4>
                             <p className="text-xs text-gray-400">
-                              {neighborhoodInfo.pros[1] || neighborhoodInfo.pros[0]}
+                              {neighborhoodInfo.pros[1] ||
+                                neighborhoodInfo.pros[0]}
                             </p>
                           </div>
 
@@ -654,7 +762,9 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                             <h4 className="text-sm font-medium text-red-400 mb-1">
                               Not ideal for:
                             </h4>
-                            <p className="text-xs text-gray-400">{neighborhoodInfo.cons[0]}</p>
+                            <p className="text-xs text-gray-400">
+                              {neighborhoodInfo.cons[0]}
+                            </p>
                           </div>
                         </div>
                       </CardContent>
@@ -669,9 +779,14 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                           <div className="flex justify-between items-center">
                             <div className="flex justify-between items-center">
                               <span className="text-sm text-gray-400">
-                                {isRental ? 'Est Annual Savings: ' : 'Est Savings: '}
+                                {isRental
+                                  ? "Est Annual Savings: "
+                                  : "Est Savings: "}
                               </span>
-                              <span className="text-lg font-bold text-[#FFFFFF]" ref={savingsRef}>
+                              <span
+                                className="text-lg font-bold text-[#FFFFFF]"
+                                ref={savingsRef}
+                              >
                                 {formatPrice(animatedSavings || 0)}
                               </span>
                             </div>
@@ -682,35 +797,50 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                         {!isRental && (
                           <>
                             {(property as UndervaluedSales).monthly_hoa &&
-                              (property as UndervaluedSales).monthly_hoa! > 0 && (
+                              (property as UndervaluedSales).monthly_hoa! >
+                                0 && (
                                 <div className="flex justify-between items-center">
-                                  <span className="text-sm text-gray-400">Monthly HOA:</span>
+                                  <span className="text-sm text-gray-400">
+                                    Monthly HOA:
+                                  </span>
                                   <span className="text-sm font-medium text-white">
-                                    {formatPrice((property as UndervaluedSales).monthly_hoa!)}
+                                    {formatPrice(
+                                      (property as UndervaluedSales)
+                                        .monthly_hoa!
+                                    )}
                                   </span>
                                 </div>
                               )}
                             {(property as UndervaluedSales).monthly_tax &&
-                              (property as UndervaluedSales).monthly_tax! > 0 && (
+                              (property as UndervaluedSales).monthly_tax! >
+                                0 && (
                                 <div className="flex justify-between items-center">
-                                  <span className="text-sm text-gray-400">Monthly Tax:</span>
+                                  <span className="text-sm text-gray-400">
+                                    Monthly Tax:
+                                  </span>
                                   <span className="text-sm font-medium text-white">
-                                    {formatPrice((property as UndervaluedSales).monthly_tax!)}
+                                    {formatPrice(
+                                      (property as UndervaluedSales)
+                                        .monthly_tax!
+                                    )}
                                   </span>
                                 </div>
                               )}
                             {(property as UndervaluedSales).monthly_hoa &&
                               (property as UndervaluedSales).monthly_hoa! > 0 &&
                               (property as UndervaluedSales).monthly_tax &&
-                              (property as UndervaluedSales).monthly_tax! > 0 && (
+                              (property as UndervaluedSales).monthly_tax! >
+                                0 && (
                                 <div className="flex justify-between items-center border-t border-gray-700 pt-4">
                                   <span className="text-sm text-gray-400 font-semibold">
                                     Total Monthly:
                                   </span>
                                   <span className="text-sm font-bold text-white">
                                     {formatPrice(
-                                      ((property as UndervaluedSales).monthly_hoa || 0) +
-                                        ((property as UndervaluedSales).monthly_tax || 0)
+                                      ((property as UndervaluedSales)
+                                        .monthly_hoa || 0) +
+                                        ((property as UndervaluedSales)
+                                          .monthly_tax || 0)
                                     )}
                                   </span>
                                 </div>
@@ -726,8 +856,10 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                     <Button
                       onClick={() =>
                         window.open(
-                          `https://www.streeteasy.com/rental/${(property as any).listing_id}`,
-                          '_blank'
+                          `https://www.streeteasy.com/rental/${
+                            (property as any).listing_id
+                          }`,
+                          "_blank"
                         )
                       }
                       className="w-full bg-white text-black hover:bg-gray-200 rounded-full font-semibold px-6 py-3 flex items-center justify-center"
@@ -738,26 +870,29 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                   )}
 
                   {/* Early Access CTA Box for Rentals - positioned below Request Tour */}
-                  {isRental && userProfile?.subscription_plan !== 'unlimited' && (
-                    <div
-                      className="rounded-2xl border-2 p-6 text-center space-y-3"
-                      style={{
-                        backgroundColor: '#000f3b',
-                        borderColor: '#0040ff',
-                      }}
-                    >
-                      <h3 className="text-white text-lg font-semibold">
-                        Want alerts on more deals like these?
-                      </h3>
-                      <p className="text-gray-400 text-sm">Be the first to know via email</p>
-                      <HoverButton
-                        onClick={() => navigate('/pricing')}
-                        className="bg-gray-800 text-white hover:bg-gray-700 rounded-full font-semibold px-6 py-2 border border-gray-600"
+                  {isRental &&
+                    userProfile?.subscription_plan !== "unlimited" && (
+                      <div
+                        className="rounded-2xl border-2 p-6 text-center space-y-3"
+                        style={{
+                          backgroundColor: "#000f3b",
+                          borderColor: "#0040ff",
+                        }}
                       >
-                        Early Access
-                      </HoverButton>
-                    </div>
-                  )}
+                        <h3 className="text-white text-lg font-semibold">
+                          Want alerts on more deals like these?
+                        </h3>
+                        <p className="text-gray-400 text-sm">
+                          Be the first to know via email
+                        </p>
+                        <HoverButton
+                          onClick={() => navigate("/pricing")}
+                          className="bg-gray-800 text-white hover:bg-gray-700 rounded-full font-semibold px-6 py-2 border border-gray-600"
+                        >
+                          Early Access
+                        </HoverButton>
+                      </div>
+                    )}
 
                   {/* Request Tour Button for Sales Properties Only */}
                   {!isRental && (
@@ -774,8 +909,10 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                     <Button
                       onClick={() =>
                         window.open(
-                          `https://www.streeteasy.com/sale/${(property as any).listing_id}`,
-                          '_blank'
+                          `https://www.streeteasy.com/sale/${
+                            (property as any).listing_id
+                          }`,
+                          "_blank"
                         )
                       }
                       className="w-full bg-[#494e52] text-white hover:bg-[#3a3f42] rounded-full font-semibold px-6 py-3 border border-white"
@@ -785,26 +922,29 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
                   )}
 
                   {/* Early Access CTA Box for Sales - positioned below Ask a Question */}
-                  {!isRental && userProfile?.subscription_plan !== 'unlimited' && (
-                    <div
-                      className="rounded-2xl border-2 p-6 text-center space-y-3"
-                      style={{
-                        backgroundColor: '#000f3b',
-                        borderColor: '#0040ff',
-                      }}
-                    >
-                      <h3 className="text-white text-lg font-semibold">
-                        Want alerts on more deals like these?
-                      </h3>
-                      <p className="text-gray-400 text-sm">Be the first to know via email</p>
-                      <HoverButton
-                        onClick={() => navigate('/pricing')}
-                        className="bg-gray-800 text-white hover:bg-gray-700 rounded-full font-semibold px-6 py-2 border border-gray-600"
+                  {!isRental &&
+                    userProfile?.subscription_plan !== "unlimited" && (
+                      <div
+                        className="rounded-2xl border-2 p-6 text-center space-y-3"
+                        style={{
+                          backgroundColor: "#000f3b",
+                          borderColor: "#0040ff",
+                        }}
                       >
-                        Early Access
-                      </HoverButton>
-                    </div>
-                  )}
+                        <h3 className="text-white text-lg font-semibold">
+                          Want alerts on more deals like these?
+                        </h3>
+                        <p className="text-gray-400 text-sm">
+                          Be the first to know via email
+                        </p>
+                        <HoverButton
+                          onClick={() => navigate("/pricing")}
+                          className="bg-gray-800 text-white hover:bg-gray-700 rounded-full font-semibold px-6 py-2 border border-gray-600"
+                        >
+                          Early Access
+                        </HoverButton>
+                      </div>
+                    )}
                 </div>
               </div>
             </div>
@@ -817,7 +957,7 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
         <TourRequestForm
           propertyId={property.id}
           propertyAddress={property.address}
-          propertyType={isRental ? 'rental' : 'sale'}
+          propertyType={isRental ? "rental" : "sale"}
           onClose={() => setShowTourRequest(false)}
         />
       )}
@@ -827,7 +967,7 @@ const PropertyDetail: React.FC<PropertyDetailProps> = ({ property, isRental = fa
         <QuestionForm
           propertyId={property.id}
           propertyAddress={property.address}
-          propertyType={isRental ? 'rental' : 'sale'}
+          propertyType={isRental ? "rental" : "sale"}
           onClose={() => setShowQuestionForm(false)}
         />
       )}
