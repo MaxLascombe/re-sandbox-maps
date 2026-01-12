@@ -17,7 +17,6 @@ const Map: React.FC<MapProps> = ({ latitude, longitude, address }) => {
     station: { name: string; lines: string[] };
     lngLat: [number, number];
   } | null>(null);
-  const [showPropertyPopup, setShowPropertyPopup] = useState(false);
 
   // Map style configuration
   const mapStyle = useMemo(
@@ -90,29 +89,9 @@ const Map: React.FC<MapProps> = ({ latitude, longitude, address }) => {
         ))}
 
         {/* Property marker - rendered last so it appears on top */}
-        <Marker
-          longitude={longitude}
-          latitude={latitude}
-          anchor="bottom"
-          onClick={() => setShowPropertyPopup(true)}
-        >
+        <Marker longitude={longitude} latitude={latitude} anchor="bottom">
           <PropertyMarker />
         </Marker>
-
-        {/* Popup for property */}
-        {showPropertyPopup && (
-          <Popup
-            longitude={longitude}
-            latitude={latitude}
-            anchor="bottom"
-            offset={25}
-            onClose={() => setShowPropertyPopup(false)}
-            closeButton={false}
-            closeOnClick={true}
-          >
-            <div className="text-black font-semibold">{address}</div>
-          </Popup>
-        )}
 
         {/* Popup for subway stations */}
         {popupInfo && (
